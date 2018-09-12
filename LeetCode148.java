@@ -17,64 +17,63 @@ public class LeetCode148{
 		ListNode l1_3=new ListNode(3);
 		l1_2.next=l1_3;
 		l1_3.next=null;
-		MergeSort(l1);
-		
-		ListNode cursor=l1;
-		while(l1!=null){
+		ListNode l=MergeSort(l1);		
+		//Print the final results 
+		ListNode cursor=l;
+		while(cursor!=null){
 			System.out.println(cursor.val);
 			cursor=cursor.next;
 		}
 	}
-	public static void splitList(ListNode l, ListNode left, ListNode right) {
-        int length=0;
-		ListNode cur_count=l;
-		while(cur_count!=null){
-			length++;
-			cur_count=cur_count.next;
+	public static ListNode MergeSort(ListNode l){
+		if (l==null || l.next==null) return l;
+		ListNode left=l;
+		ListNode middle =getMiddle(l);		
+		ListNode right=middle.next;
+		middle.next=null;
+		MergeSort(left);
+		MergeSort(right);
+		return Merge(left,right);
+	}
+	public static ListNode Merge(ListNode left, ListNode right){
+		ListNode cur_left=left;
+		ListNode cur_right=right;
+		ListNode head=null;
+		if (left==null && right==null) return head;
+		if (left==null && right!=null) {head=right; return head;}
+		if (left!=null && right==null){head=left; return head;}
+		if (cur_left.val<cur_right.val){
+			head = cur_left;
+			cur_left=cur_left.next;
 		}
-		//get the lengt value
-		ListNode cur=l;
-		int pos_id=1;
-		while (pos_id<=length/2){
-			left=cur;
-			left=left.next;
-			cur=cur.next;
-			pos_id++;
-		}		
-		while(pos_id<length){
-			right=cur;
-			right=cur.next;
-			cur=cur.next;
-			pos_id++;
-		}
-    }
-	public static void MergeSort(ListNode l){
-		if (l==null) return;
 		else {
-			//ListNode left=null;
-			//ListNode right=null;
-			//splitList(l,left,right);
-			
-			MergeSort(left); MergeSort(right); Merge(l,left,right);
+			head=cur_right;
+			cur_right=cur_right.next;
 		}
-	}
-	public static void Merge(ListNode l, ListNode l1, ListNode l2){
-		ListNode cur=l;
-		ListNode cur_1=l1;
-		ListNode cur_2=l2;
-		while(l1!=null && l2!=null){
-			 if(cur_1.val<cur_2.val){
-				 cur.next=cur_1;
-				 cur=cur.next;
-				 cur_1=cur_1.next;
-			 }
-			 else {
-				 cur.next=cur_2;
-				 cur=cur.next;
-				 cur_2=cur_2.next;
-			 }
+		ListNode head_cursor=head;		
+		while(cur_left!=null && cur_right!=null){
+			if (cur_left.val<cur_right.val){
+				head_cursor.next=cur_left;
+				cur_left=cur_left.next;
+				head_cursor=head_cursor.next;
+			}
+			else {
+				head_cursor.next=cur_right;
+				cur_right=cur_right.next;
+				head_cursor=head_cursor.next;				
+			}
 		}
-		if (cur_1!=null) cur.next=cur_1;
-		if (cur_2!=null) cur.next=cur_2;
+		if (cur_left!=null) head_cursor.next=cur_left;
+		if(cur_right!=null) head_cursor.next=cur_right;
+		return head;
 	}
-}
+	public static ListNode getMiddle(ListNode l){
+		ListNode fast=l;
+		ListNode slow=l;
+		while (fast.next.next!=null && slow.next !=null){
+			fast=fast.next.next;
+			slow=slow.next;
+		}
+		return slow;
+	}
+}	
